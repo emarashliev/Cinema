@@ -19,25 +19,22 @@ struct MoviesController: RouteCollection {
         moviesRoute.get(Movie.parameter, "actors", use: getActorsHandler)
         moviesRoute.post(Movie.parameter, "actors", Actor.parameter, use: addActorsHandler)
     }
+}
 
+// MARK: - Movie handlers
+extension MoviesController {
     func getAllHandler(_ req: Request) throws -> Future<[Movie]> {
         guard let searchQuery = req.query[String.self, at: "searchQuery"] else {
             return Movie.query(on: req).all()
         }
 
         return Movie.query(on: req).group(.or) { or in
-            or.filter(\.title =~ searchQuery)
-            or.filter(\.homepage =~ searchQuery)
-            or.filter(\.language =~ searchQuery)
-            or.filter(\.overview =~ searchQuery)
+            or.filter(\.title ~~ searchQuery)
+            or.filter(\.homepage ~~ searchQuery)
+            or.filter(\.language == searchQuery)
+            or.filter(\.overview ~~ searchQuery)
             }.all()
     }
-
-    func createHandler(_ req: Request) throws -> Future<Movie> {
-        let movie = try req.content.decode(Movie.self)
-        return movie.save(on: req)
-    }
-
 
     func getHandler(_ req: Request) throws -> Future<MovieDetails> {
         let movieFuture = try req.parameters.next(Movie.self)
@@ -50,6 +47,11 @@ struct MoviesController: RouteCollection {
         return actorsFuture.map(to: MovieDetails.self, { args in
             MovieDetails(movie: args.1, genres: args.0.1, actors: args.0.0)
         })
+    }
+
+    func createHandler(_ req: Request) throws -> Future<Movie> {
+        let movie = try req.content.decode(Movie.self)
+        return movie.save(on: req)
     }
 
     func deleteHandler(_ req: Request) throws -> Future<HTTPStatus> {
@@ -65,8 +67,10 @@ struct MoviesController: RouteCollection {
                             return movie.save(on: req)
         }
     }
+}
 
-
+// MARK: - Genre siblings handlers
+extension MoviesController {
     func getGenresHandler(_ req: Request) throws -> Future<[Genre]> {
         return try req.parameters.next(Movie.self).flatMap(to: [Genre].self) { movie in
             return try movie.genres.query(on: req).all()
@@ -80,7 +84,10 @@ struct MoviesController: RouteCollection {
             return pivot.save(on: req).transform(to: .ok)
         }
     }
+}
 
+// MARK: - Actor siblings handlers
+extension MoviesController {
     func getActorsHandler(_ req: Request) throws -> Future<[Actor]> {
         return try req.parameters.next(Movie.self).flatMap(to: [Actor].self) { movie in
             return try movie.actors.query(on: req).all()
