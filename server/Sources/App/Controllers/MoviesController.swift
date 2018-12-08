@@ -1,5 +1,6 @@
 import Vapor
 import Fluent
+import FluentSQL
 
 struct MoviesController: RouteCollection {
 
@@ -25,10 +26,10 @@ struct MoviesController: RouteCollection {
         }
 
         return Movie.query(on: req).group(.or) { or in
-            or.filter(\.title == searchQuery)
-            or.filter(\.homepage == searchQuery)
-            or.filter(\.language == searchQuery)
-            or.filter(\.overview == searchQuery)
+            or.filter(\.title =~ searchQuery)
+            or.filter(\.homepage =~ searchQuery)
+            or.filter(\.language =~ searchQuery)
+            or.filter(\.overview =~ searchQuery)
             }.all()
     }
 

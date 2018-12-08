@@ -1,4 +1,4 @@
-import FluentSQLite
+import FluentMySQL
 import Vapor
 
 final class Genre: Codable {
@@ -7,7 +7,7 @@ final class Genre: Codable {
     var name: String
 }
 
-extension Genre: SQLiteModel {}
+extension Genre: MySQLModel {}
 extension Genre: Content {}
 extension Genre: Migration {}
 extension Genre: Parameter {}

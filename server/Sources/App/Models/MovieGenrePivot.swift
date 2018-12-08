@@ -1,8 +1,8 @@
-import FluentSQLite
+import FluentMySQL
 import Vapor
 import Foundation
 
-final class MovieGenrePivot: SQLiteUUIDPivot {
+final class MovieGenrePivot: MySQLUUIDPivot {
     
     var id: UUID?
     var movieID: Movie.ID

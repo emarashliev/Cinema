@@ -1,4 +1,4 @@
-import FluentSQLite
+import FluentMySQL
 import Vapor
 
 final class Actor: Codable {
@@ -7,7 +7,7 @@ final class Actor: Codable {
     var name: String
 }
 
-extension Actor: SQLiteModel {}
+extension Actor: MySQLModel {}
 extension Actor: Content {}
 extension Actor: Migration {}
 extension Actor: Parameter {}

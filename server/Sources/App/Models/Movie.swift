@@ -1,4 +1,4 @@
-import FluentSQLite
+import FluentMySQL
 import Vapor
 
 final class Movie: Codable {
@@ -10,7 +10,7 @@ final class Movie: Codable {
     var overview: String
 }
 
-extension Movie: SQLiteModel {}
+extension Movie: MySQLModel {}
 extension Movie: Content {}
 extension Movie: Migration {}
 extension Movie: Parameter {}
