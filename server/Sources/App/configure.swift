@@ -20,11 +20,22 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
 
     // Configure a MySQL database
     var databases = DatabasesConfig()
+    let databaseName: String
+    let databasePort: Int
+
+    if env == .testing {
+        databaseName = "cinema_app_test"
+        databasePort = 3308
+    } else {
+        databaseName = "cinema_app_dev"
+        databasePort = 3306
+    }
+
     let mysqlConfig = MySQLDatabaseConfig(hostname: "localhost",
-                                          port: 3306,
+                                          port: databasePort,
                                           username: "cinema",
                                           password: "password",
-                                          database: "cinema_app")
+                                          database: databaseName)
 
     let database = MySQLDatabase(config: mysqlConfig)
     databases.add(database: database, as: .mysql)
