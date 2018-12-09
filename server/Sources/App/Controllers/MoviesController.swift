@@ -2,7 +2,7 @@ import Vapor
 import Fluent
 import FluentSQL
 
-struct MoviesController: RouteCollection {
+struct MoviesController: RouteCollection, RestfulController {
 
     func boot(router: Router) throws {
         let moviesRoute = router.grouped("api", "movies")
@@ -47,11 +47,6 @@ extension MoviesController {
         return actorsFuture.map(to: MovieDetails.self, { args in
             MovieDetails(movie: args.1, genres: args.0.1, actors: args.0.0)
         })
-    }
-
-    func createHandler(_ req: Request) throws -> Future<Movie> {
-        let movie = try req.content.decode(Movie.self)
-        return movie.save(on: req)
     }
 
     func deleteHandler(_ req: Request) throws -> Future<HTTPStatus> {
