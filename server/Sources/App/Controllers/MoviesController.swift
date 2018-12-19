@@ -38,15 +38,16 @@ extension MoviesController {
 
     func getHandler(_ req: Request) throws -> Future<MovieDetails> {
         let movieFuture = try req.parameters.next(Movie.self)
-        let genresFuture = movieFuture.flatMap(to: ([Genre], Movie).self) { movie in
-            try movie.genres.query(on: req).all().and(result: movie)
+        let genresFuture = movieFuture.flatMap(to: [Genre].self) { movie in
+            try movie.genres.query(on: req).all()
         }
-        let actorsFuture = genresFuture.flatMap(to: (([Actor], [Genre]), Movie).self ) { (genres, movie)  in
-            return try movie.actors.query(on: req).all().and(result: genres).and(result: movie)
+        let actorsFuture = movieFuture.flatMap(to: [Actor].self ) { movie  in
+            try movie.actors.query(on: req).all()
         }
-        return actorsFuture.map(to: MovieDetails.self, { args in
-            MovieDetails(movie: args.1, genres: args.0.1, actors: args.0.0)
-        })
+
+        return map(to: MovieDetails.self, movieFuture, genresFuture, actorsFuture) { movie, genres, actors in
+            MovieDetails(movie: movie, genres: genres, actors: actors)
+        }
     }
 
     func deleteHandler(_ req: Request) throws -> Future<HTTPStatus> {
