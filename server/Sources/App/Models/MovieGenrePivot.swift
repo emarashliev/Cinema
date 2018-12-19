@@ -10,8 +10,8 @@ final class MovieGenrePivot: MySQLUUIDPivot {
 
     typealias Left = Movie
     typealias Right = Genre
-    static let leftIDKey: LeftIDKey = \MovieGenrePivot.movieID
-    static let rightIDKey: RightIDKey = \MovieGenrePivot.genreID
+    static let leftIDKey: LeftIDKey = \.movieID
+    static let rightIDKey: RightIDKey = \.genreID
 
     init(_ movieID: Movie.ID, _ genreID: Genre.ID) {
         self.movieID = movieID
@@ -19,4 +19,12 @@ final class MovieGenrePivot: MySQLUUIDPivot {
     }
 }
 
-extension MovieGenrePivot: Migration {}
+extension MovieGenrePivot: Migration {
+    static func prepare(on connection: MySQLConnection) -> Future<Void> {
+        return Database.create(self, on: connection) { builder in
+            try addProperties(to: builder)
+            builder.reference(from: \.movieID, to: \Movie.id, onDelete: .cascade)
+            builder.reference(from: \.genreID, to: \Genre.id, onDelete: .cascade)
+        }
+    }
+}
