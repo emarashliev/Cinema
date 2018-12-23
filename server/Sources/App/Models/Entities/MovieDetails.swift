@@ -1,7 +1,6 @@
-import FluentMySQL
 import Vapor
-
-final class MovieDetails: Decodable {
+/*
+final class MovieDetails: Content {
     
     var id: Int?
     let title: String
@@ -21,6 +20,4 @@ final class MovieDetails: Decodable {
         self.actors = actors
     }
 }
-
-extension MovieDetails: Content {}
-
+*/

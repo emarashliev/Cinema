@@ -2,40 +2,43 @@ import Vapor
 import Fluent
 import FluentSQL
 
-struct MoviesController: RouteCollection, RestfulController {
+struct MoviesController: RouteCollection {
 
     func boot(router: Router) throws {
         let moviesRoute = router.grouped("api", "movies")
         moviesRoute.get(use: getAllHandler)
-        moviesRoute.post(use: createHandler)
-
-        moviesRoute.get(Movie.parameter, use: getHandler)
-        moviesRoute.put(Movie.parameter, use: updateHandler)
-        moviesRoute.delete(Movie.parameter, use: deleteHandler)
-
-        moviesRoute.get(Movie.parameter, "genres", use: getGenresHandler)
-        moviesRoute.post(Movie.parameter, "genres", Genre.parameter, use: addGenresHandler)
-
-        moviesRoute.get(Movie.parameter, "actors", use: getActorsHandler)
-        moviesRoute.post(Movie.parameter, "actors", Actor.parameter, use: addActorsHandler)
+//        moviesRoute.post(use: createHandler)
+//
+//        moviesRoute.get(Movie.parameter, use: getHandler)
+//        moviesRoute.put(Movie.parameter, use: updateHandler)
+//        moviesRoute.delete(Movie.parameter, use: deleteHandler)
+//
+//        moviesRoute.get(Movie.parameter, "genres", use: getGenresHandler)
+//        moviesRoute.post(Movie.parameter, "genres", Genre.parameter, use: addGenresHandler)
+//
+//        moviesRoute.get(Movie.parameter, "actors", use: getActorsHandler)
+//        moviesRoute.post(Movie.parameter, "actors", Actor.parameter, use: addActorsHandler)
     }
 }
 
 // MARK: - Movie handlers
+
 extension MoviesController {
+
+//    func createHandler(_ req: Request) throws -> Future<Movie> {
+//        let genre = try req.content.decode(Movie.self)
+//        return genre.save(on: req)
+//    }
+
     func getAllHandler(_ req: Request) throws -> Future<[Movie]> {
+        let repository = try req.make(MovieRepository.self)
+
         guard let searchQuery = req.query[String.self, at: "searchQuery"] else {
-            return Movie.query(on: req).all()
+            return repository.all()
         }
-
-        return Movie.query(on: req).group(.or) { or in
-            or.filter(\.title ~~ searchQuery)
-            or.filter(\.homepage ~~ searchQuery)
-            or.filter(\.language == searchQuery)
-            or.filter(\.overview ~~ searchQuery)
-            }.all()
+        return repository.search(searchQuery)
     }
-
+/*
     func getHandler(_ req: Request) throws -> Future<MovieDetails> {
         let movieFuture = try req.parameters.next(Movie.self)
         let genresFuture = movieFuture.flatMap(to: [Genre].self) { movie in
@@ -97,5 +100,5 @@ extension MoviesController {
             return pivot.save(on: req).transform(to: .ok)
         }
     }
-
+*/
 }
