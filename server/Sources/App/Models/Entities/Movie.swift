@@ -1,6 +1,6 @@
 import Vapor
 
-struct Movie {
+struct Movie: Content {
 
     var id: Int?
     var title: String
@@ -9,4 +9,4 @@ struct Movie {
     var overview: String
 }
 
-extension Movie: Content {}
+extension Movie: BaseEntity {}

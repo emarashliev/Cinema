@@ -7,14 +7,17 @@ final class MySQLGenre: MySQLModel {
 
     var id: Int?
     var name: String
+
+    init(id: Int?, name: String) {
+        self.id = id
+        self.name = name
+    }
 }
 
-extension MySQLGenre: Content {}
 extension MySQLGenre: Migration {}
-extension MySQLGenre: Parameter {}
 
-//extension Genre {
-//    var movies: Siblings<Genre, Movie, MovieGenrePivot> {
-//        return siblings()
-//    }
-//}
+extension MySQLGenre {
+    var movies: Siblings<MySQLGenre, MySQLMovie, MySQLMovieGenrePivot> {
+        return siblings()
+    }
+}

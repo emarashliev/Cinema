@@ -1,6 +1,6 @@
 import Vapor
-/*
-final class MovieDetails: Content {
+
+struct MovieDetails: Content {
     
     var id: Int?
     let title: String
@@ -20,4 +20,5 @@ final class MovieDetails: Content {
         self.actors = actors
     }
 }
-*/
+
+extension MovieDetails: BaseEntity {}

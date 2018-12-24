@@ -1,12 +1,15 @@
 import Vapor
 import FluentMySQL
 
-public func databases(config: inout DatabasesConfig, env: Environment) throws {
+public func databases(services: inout Services, config: inout DatabasesConfig, env: Environment) throws {
     switch env {
     case .production:
         // TODO: this have to be implemented when we're ready for production
         break
     case .development:
+        /// Register providers first
+        try services.register(FluentMySQLProvider())
+        
         let mysqlConfig = MySQLDatabaseConfig(hostname: "localhost",
                                               port: 3306,
                                               username: "cinema",
