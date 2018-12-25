@@ -2,6 +2,12 @@ import Vapor
 
 struct ActorsController: RouteCollection {
 
+    private let actorRepository: ActorRepository
+
+    init(actorRepository: ActorRepository) {
+        self.actorRepository = actorRepository
+    }
+
     func boot(router: Router) throws {
         let actorsRoute = router.grouped("api", "actors")
         actorsRoute.post(use: createHandler)
@@ -16,25 +22,21 @@ struct ActorsController: RouteCollection {
 
 extension ActorsController {
     func createHandler(_ req: Request) throws -> Future<Actor> {
-        let repository = try req.make(ActorRepository.self)
-        return try req.content.decode(Actor.self).flatMap { repository.save(actor: $0) }
+        return try req.content.decode(Actor.self).flatMap { self.actorRepository.save(actor: $0) }
 
     }
 
     func getAllHandler(_ req: Request) throws -> Future<[Actor]> {
-        let repository = try req.make(ActorRepository.self)
-        return repository.all()
+        return actorRepository.all()
     }
 
     func getHandler(_ req: Request) throws -> Future<Actor> {
-        let repository = try req.make(ActorRepository.self)
         let actorId = try req.parameters.next(Actor.self)
-        return try repository.find(id: actorId)
+        return try actorRepository.find(id: actorId)
     }
 
     func deleteHandler(_ req: Request) throws -> Future<HTTPStatus> {
-        let repository = try req.make(ActorRepository.self)
         let actorId = try req.parameters.next(Actor.self)
-        return try repository.delete(id: actorId)
+        return try actorRepository.delete(id: actorId)
     }
 }

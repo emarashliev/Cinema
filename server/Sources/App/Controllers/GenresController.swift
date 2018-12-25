@@ -2,6 +2,12 @@ import Vapor
 
 struct GenresController: RouteCollection {
 
+    private let genreRepository: GenreRepository
+
+    init(genreRepository: GenreRepository) {
+        self.genreRepository = genreRepository
+    }
+
     func boot(router: Router) throws {
         let genresRoute = router.grouped("api", "genres")
         genresRoute.post(use: createHandler)
@@ -16,24 +22,20 @@ struct GenresController: RouteCollection {
 
 extension GenresController {
     func createHandler(_ req: Request) throws -> Future<Genre> {
-        let repository = try req.make(GenreRepository.self)
-        return try req.content.decode(Genre.self).flatMap { repository.save(genre: $0) }
+        return try req.content.decode(Genre.self).flatMap { self.genreRepository.save(genre: $0) }
     }
 
     func getAllHandler(_ req: Request) throws -> Future<[Genre]> {
-        let repository = try req.make(GenreRepository.self)
-        return repository.all()
+        return genreRepository.all()
     }
 
     func getHandler(_ req: Request) throws -> Future<Genre> {
-        let repository = try req.make(GenreRepository.self)
         let genreId = try req.parameters.next(Genre.self)
-        return try repository.find(id: genreId)
+        return try genreRepository.find(id: genreId)
     }
 
     func deleteHandler(_ req: Request) throws -> Future<HTTPStatus> {
-        let repository = try req.make(GenreRepository.self)
         let genreId = try req.parameters.next(Genre.self)
-        return try repository.delete(id: genreId)
+        return try genreRepository.delete(id: genreId)
     }
 }
