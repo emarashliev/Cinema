@@ -10,7 +10,7 @@
 2. Open `Cinema/server/` folder 
 3. In your terminal, Run `docker-compose up -d`
 4. Run the project
-  * for bash or zsh users, Run `export API_KEY=test; vapor run` (your `apiKey` is `test` now)
+  * for bash or zsh users, Run `export API_KEY=test; vapor run` (now your `apiKey` is `test`)
   * or you can open the project in Xcode with `vapor xcode -y`.
   Then add the `API_KEY` as environment variable, like this👇
   ![alt text](https://github.com/emarashliev/Cinema/blob/master/setapiKey.png?raw=true "")
